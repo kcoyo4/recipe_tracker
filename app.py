@@ -12,7 +12,7 @@ ctk.set_default_color_theme("blue")
 
 root = ctk.CTk()
 
-root.geometry("700x450")
+root.geometry("1440x780")
 
 root.title("Recipe Tracker")
 
