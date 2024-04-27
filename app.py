@@ -45,6 +45,14 @@ searchBar = ctk.CTkEntry(headerFrame, width = 300, height = 30, bg_color = 'tran
                         fg_color = 'transparent', placeholder_text = "Search")
 searchBar.pack(padx = 20, pady = 20)
 
+def clear_fields():
+    name_text.delete(0, tk.END)
+    prepTime_text.delete(0, tk.END)
+    cookTime_text.delete(0, tk.END)
+    serving_text.delete(0, tk.END) 
+    description_text.delete(1.0, tk.END) 
+    instruction_text.delete(1.0, tk.END)
+
 
 def clearPage():
     for frame in mainFrame.winfo_children():
@@ -52,29 +60,27 @@ def clearPage():
     for frame in headerFrame.winfo_children():
         frame.pack_forget()
 
+def add_recipes():
+    
+        image_path = upload_image()
+        # Execute the SQL command to insert the recipe into the database
+        if image_path:
+            sql_command = "INSERT INTO Recipes(recipeName,imagePath, prepTime, cookTime, servingSize, descriptions, instructions) VALUES (%s, %s, %s, %s, %s, %s,%s)"
+            values = (name_text.get(),image_path,prepTime_text.get(),cookTime_text.get(),serving_text.get(),description_text.get("1.0", tk.END),instruction_text.get("1.0", tk.END))
+            cursor.execute(sql_command, values)
+            # Commit the transaction
+            connection.commit()
+            # Clear the entry fields
+            clear_fields()
+            # Print a success message
+            print("Recipe added successfully!")
+        else:
+            messagebox.showerror("Error", "Please upload an image before adding the recipe.")
+
 def addRecipePage():
     clearPage()
-    def clear_fields():
-        name_text.delete(0, tk.END)
-        prepTime_text.delete(0, tk.END)
-        cookTime_text.delete(0, tk.END)
-        serving_text.delete(0, tk.END) 
-        description_text.delete(1.0, tk.END) 
-        instruction_text.delete(1.0, tk.END)
-
-    def add_recipes():
-        
-        image_path = save_image()
-        # Execute the SQL command to insert the recipe into the database
-        sql_command = "INSERT INTO Recipes(recipeName,imagePath, prepTime, cookTime, servingSize, descriptions, instructions) VALUES (%s, %s, %s, %s, %s, %s)"
-        values = (name_text.get(),image_path,prepTime_text.get(),cookTime_text.get(),serving_text.get(),description_text.get("1.0", tk.END),instruction_text.get("1.0", tk.END))
-        cursor.execute(sql_command, values)
-        # Commit the transaction
-        connection.commit()
-        # Clear the entry fields
-        addRecipePage().clear_fields()
-        # Print a success message
-        print("Recipe added successfully!")
+    global name_text, prepTime_text,cookTime_text,serving_text,description_text,instruction_text
+  
 
     name_label = tk.Label(mainFrame, text = "Name of the recipe")
     name_text = ctk.CTkEntry(mainFrame)
@@ -106,17 +112,18 @@ def addRecipePage():
     instruction_label.grid(row=5, column=0,padx=5,pady=5,sticky="nsew")
     instruction_text.grid(row=5, column=1,padx=5,pady=5,sticky="nsew")
 
-    image_label = tk.Label(mainFrame)
-    upload_button = ctk.CTkButton(mainFrame, text="Upload Image", command=lambda: upload_image(image_label))
-    # image_label.pack()
+    # image_label = tk.Label(mainFrame)
+    # upload_button = ctk.CTkButton(mainFrame, text="Upload Image", command=lambda: upload_image())
+    # # image_label.pack()
     # upload_button.pack(pady=10)
-    upload_button.grid(row=8, column=1,padx=5,pady=20)
+    # upload_button.grid(row=8, column=1,padx=5,pady=20)
 
-    submit_button = ctk.CTkButton(mainFrame,text="Submit",command=add_recipes)
-    submit_button.grid(row=9,column=1,padx=5,pady=20)
+    submit_button = ctk.CTkButton(mainFrame,text="Upload Image & Submit",command=add_recipes)
+    submit_button.grid(row=11,column=1,padx=5,pady=20)
 
-    clear_button = ctk.CTkButton(mainFrame,text="Clear content", command = clear_fields)
-    clear_button.grid(row=10,column=1)
+    # clear_button = ctk.CTkButton(mainFrame,text="Clear content", command = clear_fields)
+    # clear_button.grid(row=10,column=1)
+
 
 def addIngredientPage():
     clearPage()
@@ -161,7 +168,7 @@ def showTable():
     searchBar.pack(padx = 20, pady = 20)
    
 # BUTTONS
-recipeButton = ctk.CTkButton(master = leftFrame, text = "Recipes: ", command = showTable)
+recipeButton = ctk.CTkButton(master = leftFrame, text = "Home ", command = showTable)
 addRecipeButton = ctk.CTkButton(master = leftFrame, text = " + Add Recipe ", command = addRecipePage)
 addIngredientButton = ctk.CTkButton(master = leftFrame, text = " + Add Ingredient ", command = addIngredientPage)
 addCategoryButton = ctk.CTkButton(master = leftFrame, text = " + Add Category ", command = addCategoryPage)
