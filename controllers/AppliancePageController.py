@@ -1,9 +1,9 @@
 from controllers.DBUtil import * 
 import tkinter as tk
 
-def saveCategory(nameentry, feedbackLabel):
+def saveAppliance(nameentry, feedbackLabel):
     name = nameentry.get().capitalize()
-    valid = checkValidCategoryEntry(name)
+    valid = checkValidApplianceEntry(name)
     if valid == False:
         feedbackLabel.configure(text="")
         feedbackLabel.configure(text="Please fill out all required fields.")
@@ -11,30 +11,30 @@ def saveCategory(nameentry, feedbackLabel):
         exists = checkExisting(name)
         if  exists == False:
             category = (name)
-            query = "INSERT INTO Categories (categoryName) VALUES ('" + name + "')"
+            query = "INSERT INTO Appliances (applianceName) VALUES ('" + name + "')"
             # Using parameterized execution with a tuple
             cursor.execute(query)
-            query = "SELECT * FROM Categories"
+            query = "SELECT * FROM Appliances"
             cursor.execute(query)
             result = cursor.fetchall()
             print(result)
             fieldsClear(nameentry, feedbackLabel)
-            feedbackLabel.configure(text="Category Successfully Added!")
+            feedbackLabel.configure(text="Appliance Successfully Added!")
         else:
-            feedbackLabel.configure(text="Category already exists.")
+            feedbackLabel.configure(text="Appliance already exists.")
 
 def fieldsClear(nameentry, feedbackLabel):
     nameentry.delete(0, tk.END)
     feedbackLabel.configure(text="")
 
-def checkValidCategoryEntry(name):
+def checkValidApplianceEntry(name):
     if len(name) == 0:
         return False
     else:
         return True
 
 def checkExisting(name):
-    query = "SELECT categoryName FROM Categories where categoryName = '" + name + "'"
+    query = "SELECT applianceName FROM Appliances where applianceName = '" + name + "'"
     cursor.execute(query)
     results = cursor.fetchone()
     if results == None:

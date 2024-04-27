@@ -9,6 +9,7 @@ from controllers.IngredientPageController import *
 from controllers.DBUtil import *
 from controllers.AddRecipeController import * 
 from controllers.CategoryPageController import * 
+from controllers.AppliancePageController import * 
 
 cursor = getCursor()
 connection = getConnection()
@@ -141,6 +142,16 @@ def addCategoryPage():
     savebutton.pack(padx=20, pady=10, side=tk.LEFT)
     feedbackLabel.pack(padx=20, pady=10, side=tk.LEFT)
 
+def addAppliancePage():
+    clearPage()
+    nameentry = ctk.CTkEntry(mainFrame, width = 140, height = 30, bg_color = 'transparent',
+                          fg_color = 'transparent', placeholder_text = "Name")
+    feedbackLabel = ctk.CTkLabel(mainFrame, text="")
+    savebutton = ctk.CTkButton(mainFrame, text = " Save ", command=lambda: saveAppliance(nameentry, feedbackLabel))
+    nameentry.pack(padx = 20, pady = 20, side=tk.LEFT)
+    savebutton.pack(padx=20, pady=10, side=tk.LEFT)
+    feedbackLabel.pack(padx=20, pady=10, side=tk.LEFT)
+
 def removeRecipe():
     clearPage()
     print("Removed!")
@@ -154,6 +165,7 @@ recipeButton = ctk.CTkButton(master = leftFrame, text = "Recipes: ", command = s
 addRecipeButton = ctk.CTkButton(master = leftFrame, text = " + Add Recipe ", command = addRecipePage)
 addIngredientButton = ctk.CTkButton(master = leftFrame, text = " + Add Ingredient ", command = addIngredientPage)
 addCategoryButton = ctk.CTkButton(master = leftFrame, text = " + Add Category ", command = addCategoryPage)
+addApplianceButton = ctk.CTkButton(master = leftFrame, text = " + Add Appliance ", command = addAppliancePage)
 removeRecipeButton = ctk.CTkButton(master = leftFrame, text = " - Remove Recipe ", command = removeRecipe)
 
 
@@ -161,6 +173,7 @@ recipeButton.pack(pady = 20)
 addRecipeButton.pack(pady = 20)
 addIngredientButton.pack(pady = 20)
 addCategoryButton.pack(pady = 20)
+addApplianceButton.pack(pady = 20)
 removeRecipeButton.pack(pady = 20)
 
 root.mainloop()
