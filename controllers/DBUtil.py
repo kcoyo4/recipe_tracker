@@ -6,9 +6,10 @@ global connection, cursor
 connection = mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Abaracadabara1!",
+        password="Gloria3082",
         database="recipedata",
         port=3306,
+
     )
 cursor = connection.cursor()
 # testing cursor connectivity
