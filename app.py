@@ -4,7 +4,6 @@ import tkinter as tk
 import customtkinter as ctk
 
 
-
 from controllers.IngredientPageController import * 
 from controllers.DBUtil import *
 from controllers.AddRecipeController import * 
