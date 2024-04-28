@@ -44,7 +44,7 @@ leftTitle.pack(padx = 20, pady = 20)
 def image_click(even,image_path):
     clearPage()
     print("Image clicked")
-    frame_image = LabelFrame(mainFrame, text="the image of the recipe",padx=20,pady=20)
+    frame_image = LabelFrame(mainFrame, padx=20,pady=20)
     image = Image.open(image_path)
     image.thumbnail((300, 300))
     image_one = ImageTk.PhotoImage(image)
@@ -53,11 +53,11 @@ def image_click(even,image_path):
     image_label.image = image_one
     image_label.pack(padx=20,pady=20)
 
-    frame_image.grid(row = 0, column=0, padx=10,pady=10)
+    frame_image.grid(row = 0, column=0,padx=10,pady=10)
 
 
-    frame_info = LabelFrame(mainFrame,text="the info of a recipe",padx=20,pady=20)
-    frame_info.grid(row = 0, column=1, padx=10,pady=10)
+    frame_info = LabelFrame(mainFrame,padx=20,pady=20)
+    frame_info.grid(row = 0, column=1,rowspan=3, padx=10,pady=10)
 
     try:
         # Fetch recipe information from the database based on the image path
@@ -68,34 +68,38 @@ def image_click(even,image_path):
             recipe_name = ctk.CTkLabel(frame_info, text = recipe_info[1],font = ctk.CTkFont(size = 30, weight = 'normal'))
             recipe_name.grid(row = 0, column=0)
 
-            d_label = ctk.CTkLabel(frame_info, text = "Description")
+            d_label = ctk.CTkLabel(frame_info, text = "Description", width = 40,font=("Helvetica", 15))
             d_label.grid(row = 1, column=0)
-            description = ctk.CTkLabel(frame_info, text = recipe_info[6])
+            description = tk.Text(frame_info, wrap=tk.WORD, height=5, width=60, font=("Helvetica", 15))
+            description.insert(tk.END,recipe_info[6])
+            description.config(state="disabled")
             description.grid(row = 2, column=0, columnspan = 3,rowspan = 4)
 
-            p_label = ctk.CTkLabel(frame_info, text = "Prep Time: ")
-            p_label.grid(row = 7, column=0)
             prep_time = recipe_info[3]
-            prep_l= ctk.CTkLabel(frame_info, text = prep_time)
-            prep_l.grid(row = 7, column=1)
+            p_label = ctk.CTkLabel(frame_info, text = "Prep Time:     " + str(prep_time),font=("Helvetica", 15))
+            p_label.grid(row = 7, column=0)
 
-            c_label = ctk.CTkLabel(frame_info, text = "Cook Time: ")
-            c_label.grid(row = 8, column=0)
             cook_time = recipe_info[4]
-            cook_l = ctk.CTkLabel(frame_info, text = cook_time)
-            cook_l.grid(row = 8, column=1)
+            c_label = ctk.CTkLabel(frame_info, text = "Cook Time:     " + str(cook_time),font=("Helvetica", 15))
+            c_label.grid(row = 8, column=0)
+            
          
             Total_Time = prep_time + cook_time
-            t_label = ctk.CTkLabel(frame_info, text = "Total Time: ")
+            t_label = ctk.CTkLabel(frame_info, text = "Total Time:     " + str(Total_Time),font=("Helvetica", 15))
             t_label.grid(row = 9, column=0)
-            total_l = ctk.CTkLabel(frame_info, text = Total_Time)
-            total_l.grid(row = 9, column=1)
+            
+            
+            s_label = ctk.CTkLabel(frame_info, text = "Serving Size:     " + str(recipe_info[5]),font=("Helvetica", 15))
+            s_label.grid(row = 10, column=0)
             
 
-            instr_label = ctk.CTkLabel(frame_info, text = "Instruction")
-            instr_label.grid(row=10,column = 0)
-            in_label = ctk.CTkLabel(frame_info, text = recipe_info[7])
-            in_label.grid(row=11,column = 0, rowspan = 9)
+
+            instr_label = ctk.CTkLabel(frame_info, text = "Instruction",font=("Helvetica", 15))
+            instr_label.grid(row=11,column = 0)
+            instruction = tk.Text(frame_info, wrap=tk.WORD,height=20,width=60,font=("Helvetica", 15))           
+            instruction.insert(tk.END,recipe_info[7])
+            instruction.config(state="disabled")
+            instruction.grid(row=12,column = 0, rowspan = 9)
 
             # # Display the recipe information
             print("Recipe Name:", recipe_name)
