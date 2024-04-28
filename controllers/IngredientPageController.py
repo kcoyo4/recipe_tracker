@@ -19,6 +19,7 @@ def saveIngredient(nameentry, combobox, feedbackLabel):
             query = "INSERT INTO Ingredients (ingTypeID, ingName) VALUES (%s, '%s')"%ingredient
             # Using parameterized execution with a tuple
             cursor.execute(query)
+            connection.commit()
             query = "SELECT * FROM Ingredients"
             cursor.execute(query)
             result = cursor.fetchall()
