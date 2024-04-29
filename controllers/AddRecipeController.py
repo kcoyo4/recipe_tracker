@@ -5,21 +5,159 @@ from tkinter import filedialog, messagebox
 import shutil
 import os
 
-def add_recipes(name_text, prepTime_text, cookTime_text, serving_text, description_text, instruction_text): 
+def saveRecipe(name_text, prepTime_text, cookTime_text, serving_text, description_text, instruction_text, category_listbox, ingredient_listbox, appliance_listbox): 
         image_path = upload_image()
+        name = name_text.get()
+        prepTime = prepTime_text.get()
+        cookTime = cookTime_text.get()
+        servingSize = serving_text.get()
+        descriptions = description_text.get("1.0", tk.END)
+        instructions = instruction_text.get("1.0", tk.END)
+
+        appliance_listbox.get("All")
+        appliances = appliance_listbox.get("All")
+        categories = category_listbox.get("All")
+        ingredients = ingredient_listbox.get("All")
+
+        notexists = checkRecipeNameExisting(name)
+
         # Execute the SQL command to insert the recipe into the database
-        if image_path:
-            sql_command = "INSERT INTO Recipes(recipeName,imagePath, prepTime, cookTime, servingSize, descriptions, instructions) VALUES (%s, %s, %s, %s, %s, %s,%s)"
-            values = (name_text.get(),image_path,prepTime_text.get(),cookTime_text.get(),serving_text.get(),description_text.get("1.0", tk.END),instruction_text.get("1.0", tk.END))
-            cursor.execute(sql_command, values)
-            # Commit the transaction
-            connection.commit()
-            # Clear the entry fields
-            clear_fields()
+        if name and prepTime and cookTime and servingSize and descriptions and instructions and ingredients and notexists:
+            recipetable_vals = (name, image_path, prepTime, cookTime, servingSize, descriptions, instructions)
+            saveRecipeTable(recipetable_vals)
+            thisID = getRecipeID(name)
+            if categories:
+                saveRecipeCategories(categories, thisID)
+            saveRecipeIngredients(ingredients, thisID)
+            if appliances:
+                saveRecipeAppliances(appliances, thisID)
+            clear_fields(name_text, prepTime_text, cookTime_text, serving_text, description_text, instruction_text)
             # Print a success message
             print("Recipe added successfully!")
+        elif notexists == False:
+            messagebox.showerror("Error", "A recipe with this name already exists.")
         else:
-            messagebox.showerror("Error", "Please upload an image before adding the recipe.")
+            messagebox.showerror("Error", "Please fill out all necessary fields before submitting.")
+
+def checkRecipeNameExisting(name):
+    query = "SELECT recipeID FROM Recipes where recipeName = '" + name + "'"
+    cursor.execute(query)
+    results = cursor.fetchone()
+    if results == None:
+        return True
+    else:
+        return False
+
+def getRecipeID(name):
+    query = "SELECT recipeID FROM Recipes where recipeName = '" + name + "'"
+    cursor.execute(query)
+    tuple = cursor.fetchall()
+    result = tuple[0][0]
+    print(result)
+    return result
+
+def getCategoryID(name):
+    query = "SELECT categoryID FROM Categories where categoryName = '" + name + "'"
+    cursor.execute(query)
+    tuple = cursor.fetchall()
+    result = tuple[0][0]
+    print(result)
+    return result
+
+def getApplianceID(name):
+    query = "SELECT applianceID FROM Appliances where applianceName = '" + name + "'"
+    cursor.execute(query)
+    tuple = cursor.fetchall()
+    result = tuple[0][0]
+    print(result)
+    return result
+
+def getIngredientID(name):
+    query = "SELECT ingID FROM Ingredients where ingName = '" + name + "'"
+    cursor.execute(query)
+    tuple = cursor.fetchall()
+    result = tuple[0][0]
+    print(result)
+    return result
+
+def getUnitID(name):
+    query = "SELECT unitID FROM Units where unitName = '" + name + "'"
+    cursor.execute(query)
+    tuple = cursor.fetchall()
+    result = tuple[0][0]
+    print(result)
+    return result
+
+def saveRecipeTable(recipetable_vals):
+    try:
+        query = "INSERT INTO Recipes(recipeName,imagePath, prepTime, cookTime, servingSize, descriptions, instructions) VALUES (%s, %s, %s, %s, %s, %s,%s)"
+        cursor.execute(query, recipetable_vals)
+        connection.commit()
+
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to save data to Recipes table: {e}")
+        connection.rollback()
+    
+def saveRecipeCategories(categories, recipeID):
+    try:
+        for category in categories:
+            categoryID = getCategoryID(category)
+            value = (recipeID, categoryID)
+            query = "INSERT INTO RecipeCategories(recipeID, categoryID) VALUES (%s, %s)"
+            cursor.execute(query, value)
+        connection.commit()
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to save data to RecipeCategories table: {e}")
+        connection.rollback()
+    
+def saveRecipeIngredients(ingredients, recipeID):
+    try:
+        for ingredient in ingredients:
+            name, quantity, unit = split_ingredient(ingredient)
+            ingID = getIngredientID(name)
+            unitID = None
+            if unit:
+                unitID = getUnitID(unit)
+            value = (recipeID, ingID, unitID, quantity)
+            query = "INSERT INTO RecipeIngredients(recipeID, ingID, unitID, quantity) VALUES (%s, %s, %s, %s)"
+            cursor.execute(query, value)
+        connection.commit()
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to save data to RecipeIngredients table: {e}")
+        connection.rollback()
+
+def split_ingredient(ingredient_str):
+    # Split the ingredient name from the rest
+    parts = ingredient_str.split(" - ")
+
+    if len(parts) < 2:
+        raise ValueError("Invalid ingredient format")
+
+    name = parts[0].strip()
+    quantity_unit = parts[1].strip()
+    unit = None
+    quantity = None
+    quantity_parts = quantity_unit.split()
+
+    if len(quantity_parts) == 1:
+        quantity = quantity_parts[0]  
+    elif len(quantity_parts) > 1:
+        quantity = quantity_parts[0]  
+        unit = quantity_parts[1]
+
+    return name, quantity, unit
+
+def saveRecipeAppliances(appliances, recipeID):
+    try:
+        for appliance in appliances:
+            applianceID = getApplianceID(appliance)
+            value = (recipeID, applianceID)
+            query = "INSERT INTO RecipeAppliances (recipeID, applianceID) VALUES (%s, %s)"
+            cursor.execute(query, value)
+        connection.commit()
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to save data to RecipeAppliances table: {e}")
+        connection.rollback()
 
 def upload_image():
     file_path = filedialog.askopenfilename()
@@ -52,7 +190,6 @@ def clear_fields(name_text, prepTime_text, cookTime_text, serving_text, descript
     serving_text.delete(0, tk.END) 
     description_text.delete(1.0, tk.END) 
     instruction_text.delete(1.0, tk.END)
-    
 
 def getCategories():
     query = "SELECT categoryName FROM Categories"

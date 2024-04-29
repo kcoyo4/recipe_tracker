@@ -3,6 +3,7 @@ from tkinter import ttk
 import tkinter as tk
 import customtkinter as ctk
 from PIL import Image, ImageTk
+from CTkListbox import *
 
 from controllers.IngredientPageController import * 
 from controllers.DBUtil import *
@@ -22,7 +23,7 @@ root.geometry("1430x980")
 root.title("Recipe Tracker")
 
 #Two Frames
-
+base_font = ctk.CTkFont(family="Poplar Std")
 # Tall Left Frame
 leftFrame = ctk.CTkFrame(root, height = 700, width = 500, fg_color = 'gray', bg_color = 'gray')
 leftFrame.pack(anchor = 'w', side = LEFT,fill = Y, expand = FALSE)
@@ -36,7 +37,7 @@ headerFrame = ctk.CTkFrame(root, height = 150, width = 300, fg_color = 'transpar
 headerFrame.pack(anchor = 'n', side = TOP, fill = BOTH, expand = FALSE)
 
 # Label for the Tall Left Frame 'Main Menu'
-leftTitle = ctk.CTkLabel(master = leftFrame, text = "Main Menu", font = ctk.CTkFont(size = 40, weight = 'normal'))
+leftTitle = ctk.CTkLabel(master = leftFrame, text = "ReciPedia", font = ctk.CTkFont(family="Calibri", size = 40, weight = 'normal'))
 leftTitle.pack(padx = 20, pady = 20)
 
 
@@ -71,7 +72,7 @@ def image_click(even,image_path):
             d_label.grid(row = 1, column=0)
             description = tk.Text(frame_info, wrap=tk.WORD, height=5, width=60, font=("Helvetica", 15))
             description.insert(tk.END,recipe_info[6])
-            description.config(state="disabled")
+            description.configure(state="disabled")
             description.grid(row = 2, column=0, columnspan = 3,rowspan = 4)
 
             prep_time = recipe_info[3]
@@ -97,7 +98,7 @@ def image_click(even,image_path):
             instr_label.grid(row=11,column = 0)
             instruction = tk.Text(frame_info, wrap=tk.WORD,height=20,width=60,font=("Helvetica", 15))           
             instruction.insert(tk.END,recipe_info[7])
-            instruction.config(state="disabled")
+            instruction.configure(state="disabled")
             instruction.grid(row=12,column = 0, rowspan = 9)
 
             # # Display the recipe information
@@ -111,25 +112,24 @@ def image_click(even,image_path):
     except Exception as e:
         print(f"Error fetching recipe information: {e}")
 
-
-
-
-
-
-
-
-
-
-
-
-
 def display_recipes():
     clearPage()
     # Search Bar
+    headerFrame.pack()
     searchBar = ctk.CTkEntry(headerFrame, width = 300, height = 30, bg_color = 'transparent',
                             fg_color = 'transparent', placeholder_text = "Search")
     searchBar.pack(padx = 20, pady = 20)
 
+    answer = searchBar.get()
+
+    if answer == "":
+        cursor.execute("SELECT * FROM Recipes")
+        result = cursor.fetchall()
+
+    else:
+        sqlStatement = "SELECT * FROM Recipes WHERE recipeName LIKE '" + answer + "%'"
+        cursor.execute(sqlStatement)
+        result = cursor.fetchall()
 
     cursor.execute("SELECT * FROM Recipes")
     result = cursor.fetchall()
@@ -137,7 +137,6 @@ def display_recipes():
     row_odd_num = 1  # for display the name of the each recipe
     column_num = 0
     gap_size = 15
-    
     
 
     for x in result:
@@ -182,89 +181,138 @@ def display_recipes():
         
         column_num += 1
             
-
-
-
-# clear out the text content after done with the submision 
-def clear_fields():
-    name_text.delete(0, tk.END)
-    prepTime_text.delete(0, tk.END)
-    cookTime_text.delete(0, tk.END)
-    serving_text.delete(0, tk.END) 
-    description_text.delete(1.0, tk.END) 
-    instruction_text.delete(1.0, tk.END)
-
-
 def clearPage():
     for frame in mainFrame.winfo_children():
         frame.destroy()
     for frame in headerFrame.winfo_children():
         frame.pack_forget()
-
-def add_recipes():
-    
-        image_path = upload_image()
-        # Execute the SQL command to insert the recipe into the database
-        if image_path:
-            sql_command = "INSERT INTO Recipes(recipeName,imagePath, prepTime, cookTime, servingSize, descriptions, instructions) VALUES (%s, %s, %s, %s, %s, %s,%s)"
-            values = (name_text.get(),image_path,prepTime_text.get(),cookTime_text.get(),serving_text.get(),description_text.get("1.0", tk.END),instruction_text.get("1.0", tk.END))
-            cursor.execute(sql_command, values)
-            # Commit the transaction
-            connection.commit()
-            # Clear the entry fields
-            clear_fields()
-            # Print a success message
-            print("Recipe added successfully!")
-        else:
-            messagebox.showerror("Error", "Please upload an image before adding the recipe.")
+    headerFrame.pack_forget()
 
 def addRecipePage():
     clearPage()
-    global name_text, prepTime_text,cookTime_text,serving_text,description_text,instruction_text
-  
-
-    name_label = tk.Label(mainFrame, text = "Name of the recipe")
+    name_label = ctk.CTkLabel(mainFrame, text = "Name of the recipe")
     name_text = ctk.CTkEntry(mainFrame)
-    name_label.grid(row=0, column=0,padx=5)
-    name_text.grid(row=0, column=1,padx=5)
+    name_label.grid(row=0, column=0,padx=5, pady=20)
+    name_text.grid(row=0, column=1,padx=5, pady=20)
 
-    prepTime_label = tk.Label(mainFrame, text= "Preparation time")
+    prepTime_label = ctk.CTkLabel(mainFrame, text= "Preparation time")
     prepTime_text = ctk.CTkEntry(mainFrame, placeholder_text = "input minutes")
     prepTime_label.grid(row=1, column=0,padx=5,pady=5)
     prepTime_text.grid(row=1, column=1,padx=5,pady=5)
 
-    cookTime_label = tk.Label(mainFrame, text= "Cook time")
+    cookTime_label = ctk.CTkLabel(mainFrame, text= "Cook time")
     cookTime_text = ctk.CTkEntry(mainFrame, placeholder_text = "input minutes")
     cookTime_label.grid(row=2, column=0,padx=5,pady=5)
     cookTime_text.grid(row=2, column=1,padx=5,pady=5)
 
-    serving_label = tk.Label(mainFrame, text= "Serving size")
+    serving_label = ctk.CTkLabel(mainFrame, text= "Serving size")
     serving_text = ctk.CTkEntry(mainFrame, placeholder_text = "number of people")
     serving_label.grid(row=3, column=0,padx=5,pady=5)
     serving_text.grid(row=3, column=1,padx=5,pady=5)
 
-    description_label = tk.Label(mainFrame, text= "Description")
-    description_text = tk.Text(mainFrame, width= 60, height= 10)
+    description_label = ctk.CTkLabel(mainFrame, text= "Description")
+    description_text = ctk.CTkTextbox(mainFrame, width= 60, height= 150)
     description_label.grid(row=4, column=0,padx=5,pady=5,sticky="nsew")
     description_text.grid(row=4, column=1,padx=5,pady=5,sticky="nsew")
 
-    instruction_label = tk.Label(mainFrame, text= "Instruction")
-    instruction_text = tk.Text(mainFrame, width= 60, height= 20)
+    instruction_label = ctk.CTkLabel(mainFrame, text= "Instruction")
+    instruction_text = ctk.CTkTextbox(mainFrame, width= 60, height= 150)
     instruction_label.grid(row=5, column=0,padx=5,pady=5,sticky="nsew")
     instruction_text.grid(row=5, column=1,padx=5,pady=5,sticky="nsew")
 
-    # image_label = tk.Label(mainFrame)
-    # upload_button = ctk.CTkButton(mainFrame, text="Upload Image", command=lambda: upload_image())
-    # # image_label.pack()
-    # upload_button.pack(pady=10)
-    # upload_button.grid(row=8, column=1,padx=5,pady=20)
+    # Category Selection
+    category_label = ctk.CTkLabel(mainFrame, text="Category:")
+    category_label.grid(row=0, column=2, padx=5, pady=5)
 
-    submit_button = ctk.CTkButton(mainFrame,text="Upload Image & Submit",command=add_recipes)
-    submit_button.grid(row=11,column=1,padx=5,pady=20)
+    category_options = getCategories()
+    category_combo = ctk.CTkComboBox(mainFrame, values=category_options, state="readonly")
+    category_combo.grid(row=0, column=3, padx=5, pady=5)
+
+    cListbox_label = ctk.CTkLabel(mainFrame, text="Added Categories:")
+    cListbox_label.grid(row=1, column=2, padx=5, pady=5)
+    category_listbox = CTkListbox(mainFrame, height=60, width=150)
+    category_listbox.grid(row=1, column=3, padx=5, pady=5)
+
+    categorySelect_button = ttk.Button(mainFrame, text="Select", command=lambda: addCategory(category_combo, category_listbox))
+    categorySelect_button.grid(row=0, column=4, padx=5, pady=5)
+
+    # Ingredient Category Selection
+    
+    # ingredientadd_label = ctk.CTkLabel(mainFrame, text="Select an Ingredient Category to begin adding Ingredients.")
+    # ingredientadd_label.grid(row=0, column=2, padx=5, pady=5)
+    ingcategory_label = ctk.CTkLabel(mainFrame, text="Ingredient Type:")
+    ingcategory_label.grid(row=2, column=2, padx=5, pady=5)
+
+    ingredientcategory_options = getIngredientCategories()
+    ingcategory_combo = ctk.CTkComboBox(mainFrame, values=ingredientcategory_options, state="readonly")
+    ingcategory_combo.grid(row=2, column=3, padx=5, pady=5)
+
+    ingredientSelectionDisplay_button = ttk.Button(mainFrame, text="Select", command=lambda:displayIngredientSelection(ingcategory_combo, ingredient_listbox))
+    ingredientSelectionDisplay_button.grid(row=2, column=4, padx=5, pady=5)
+    
+    listbox_label = ctk.CTkLabel(mainFrame, text="Added Ingredients:")
+    listbox_label.grid(row=4, column=2, padx=5, pady=5)
+    ingredient_listbox = CTkListbox(mainFrame, height=250, width=200)
+    ingredient_listbox.grid(row=4, column=3, padx=5, pady=5)
+
+    #Appliance Selection
+    appliance_label = ctk.CTkLabel(mainFrame, text="Appliance:")
+    appliance_label.grid(row=5, column=2, padx=5, pady=5)
+
+    appliance_options = getAppliances()
+    appliance_combo = ctk.CTkComboBox(mainFrame, values=appliance_options, state="readonly")
+    appliance_combo.grid(row=5, column=3, padx=5, pady=5)
+
+    applianceSelect_button = ttk.Button(mainFrame, text="Select", command=lambda: addAppliance(appliance_combo,  appliance_listbox))
+    applianceSelect_button.grid(row=5, column=4, padx=5, pady=5)
+
+    appliance_label = ctk.CTkLabel(mainFrame, text="Added Appliances:")
+    appliance_label.grid(row=6, column=2, padx=5, pady=5)
+    appliance_listbox = CTkListbox(mainFrame, height=100, width=200)
+    appliance_listbox.grid(row=6, column=3, padx=5, pady=5)
+
+    # setImagePath()
+    # image_label = ctk.CTkLabel(mainFrame, text ="")
+    # upload_button = ctk.CTkButton(mainFrame, text="Upload Image", command=lambda: upload_image(image_label))
+    # image_label.grid(row=1, column=2,padx=5,pady=20)
+    # upload_button.grid(row=2, column=2,padx=5,pady=20)
+
+    submit_button = ctk.CTkButton(mainFrame,text="Upload Image & Submit", command=lambda:saveRecipe(name_text, prepTime_text, cookTime_text, serving_text, description_text, instruction_text, category_listbox, ingredient_listbox, appliance_listbox))
+    submit_button.grid(row=11,column=0,padx=5,pady=20)
 
     # clear_button = ctk.CTkButton(mainFrame,text="Clear content", command = clear_fields)
     # clear_button.grid(row=10,column=1)
 
+    
+def displayIngredientSelection(combobox, ingredient_listbox):
+    category = combobox.get()
+    if len(category) > 0:
+        icID = str(getIngCatID(category))
+        # Ingredient selection
+        ingredient_label = ctk.CTkLabel(mainFrame, text="Ingredient:")
+        ingredient_label.grid(row=3, column=2, padx=5, pady=5)
+
+        ingredient_options = getIngredients(icID)
+        ingredient_combo = ctk.CTkComboBox(mainFrame, values=ingredient_options, state="readonly")
+        ingredient_combo.grid(row=3, column=3, padx=5, pady=5)
+
+        # Quantity input
+        quantity_label = ctk.CTkLabel(mainFrame, text="Quantity:")
+        quantity_label.grid(row=3, column=4, padx=5, pady=5)
+
+        quantity_entry = ctk.CTkEntry(mainFrame)
+        quantity_entry.grid(row=3, column=5, padx=5, pady=5)
+
+        # Unit selection
+        unit_label = ctk.CTkLabel(mainFrame, text="Unit:")
+        unit_label.grid(row=3, column=6, padx=5, pady=5)
+
+        unit_options = getUnits()
+        unit_combo = ctk.CTkComboBox(mainFrame, values=unit_options, state="readonly")
+        unit_combo.grid(row=3, column=7, padx=5, pady=5)
+
+        add_button = ttk.Button(mainFrame, text="Add", command=lambda: addRecipeIngredient(ingredient_combo, quantity_entry, unit_combo, ingredient_listbox))
+        add_button.grid(row=3, column=8, padx=5, pady=5)
 
 def addIngredientPage():
     clearPage()
@@ -303,10 +351,6 @@ def addAppliancePage():
 def removeRecipe():
     clearPage()
     print("Removed!")
-
-def showTable():
-    clearPage()
-    searchBar.pack(padx = 20, pady = 20)
    
 # BUTTONS
 recipeButton = ctk.CTkButton(master = leftFrame, text = "Home ", command = display_recipes)
@@ -316,7 +360,6 @@ addCategoryButton = ctk.CTkButton(master = leftFrame, text = " + Add Category ",
 addApplianceButton = ctk.CTkButton(master = leftFrame, text = " + Add Appliance ", command = addAppliancePage)
 removeRecipeButton = ctk.CTkButton(master = leftFrame, text = " - Remove Recipe ", command = removeRecipe)
 
-
 recipeButton.pack(pady = 20)
 addRecipeButton.pack(pady = 20)
 addIngredientButton.pack(pady = 20)
@@ -324,4 +367,6 @@ addCategoryButton.pack(pady = 20)
 addApplianceButton.pack(pady = 20)
 removeRecipeButton.pack(pady = 20)
 
+#Setting up
+display_recipes()
 root.mainloop()

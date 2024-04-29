@@ -53,10 +53,10 @@ def getIngredientCategories():
 def getIngCatID(name):
     query = "SELECT ingtypeID FROM IngredientTypes where ingtypeName= '" + name + "'"
     cursor.execute(query)
-    result = cursor.fetchall()
-    nontuple = result[0][0]
-    print(nontuple)
-    return nontuple
+    tuple = cursor.fetchall()
+    result = tuple[0][0]
+    print(result)
+    return result
 
 def checkExisting(name):
     query = "SELECT ingName FROM Ingredients where ingName = '" + name + "'"
