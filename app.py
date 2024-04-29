@@ -9,7 +9,8 @@ from controllers.IngredientPageController import *
 from controllers.DBUtil import *
 from controllers.AddRecipeController import * 
 from controllers.CategoryPageController import * 
-from controllers.AppliancePageController import * 
+from controllers.AppliancePageController import *
+from controllers.individualRecipePageController import * 
 
 cursor = getCursor()
 connection = getConnection()
@@ -44,7 +45,12 @@ leftTitle.pack(padx = 20, pady = 20)
 def image_click(even,image_path):
     clearPage()
     print("Image clicked")
-    frame_image = LabelFrame(mainFrame, padx=20,pady=20)
+    frame_left = ctk.CTkFrame(mainFrame, fg_color = 'transparent', bg_color = 'transparent')
+    frame_left.grid(row = 0, column=0,padx=10,pady=10)
+
+    frame_image = LabelFrame(frame_left, padx=20,pady=20)
+    frame_image.grid(row = 0, column=0,padx=10,pady=10)
+
     image = Image.open(image_path)
     image.thumbnail((300, 300))
     image_one = ImageTk.PhotoImage(image)
@@ -53,11 +59,12 @@ def image_click(even,image_path):
     image_label.image = image_one
     image_label.pack(padx=20,pady=20)
 
-    frame_image.grid(row = 0, column=0,padx=10,pady=10)
-
+    frame_bottominfo = LabelFrame(frame_left,padx=20,pady=20)
+    frame_bottominfo.grid(row = 1, column=0,rowspan=3, padx=10,pady=10)
 
     frame_info = LabelFrame(mainFrame,padx=20,pady=20)
     frame_info.grid(row = 0, column=1,rowspan=3, padx=10,pady=10)
+
 
     try:
         # Fetch recipe information from the database based on the image path
@@ -65,6 +72,7 @@ def image_click(even,image_path):
         recipe_info = cursor.fetchone()
         if recipe_info:
             # Extract recipe information
+            recipeID = recipe_info[0]
             recipe_name = ctk.CTkLabel(frame_info, text = recipe_info[1],font = ctk.CTkFont(size = 30, weight = 'normal'))
             recipe_name.grid(row = 0, column=0)
 
@@ -83,23 +91,39 @@ def image_click(even,image_path):
             c_label = ctk.CTkLabel(frame_info, text = "Cook Time:     " + str(cook_time),font=("Helvetica", 15))
             c_label.grid(row = 8, column=0)
             
-         
             Total_Time = prep_time + cook_time
             t_label = ctk.CTkLabel(frame_info, text = "Total Time:     " + str(Total_Time),font=("Helvetica", 15))
             t_label.grid(row = 9, column=0)
             
-            
             s_label = ctk.CTkLabel(frame_info, text = "Serving Size:     " + str(recipe_info[5]),font=("Helvetica", 15))
             s_label.grid(row = 10, column=0)
             
-
-
             instr_label = ctk.CTkLabel(frame_info, text = "Instruction",font=("Helvetica", 15))
             instr_label.grid(row=11,column = 0)
             instruction = tk.Text(frame_info, wrap=tk.WORD,height=20,width=60,font=("Helvetica", 15))           
             instruction.insert(tk.END,recipe_info[7])
             instruction.configure(state="disabled")
             instruction.grid(row=12,column = 0, rowspan = 9)
+            
+            categories = getRecipeCategories(recipeID)
+            category_text = ", ".join([getCategoryName(c) for c in categories])
+            categorylabel = ctk.CTkLabel(frame_bottominfo, text="Categories: " + category_text)
+            categorylabel.grid(row=0, column=0, padx=5, pady=5)
+
+            appliances = getRecipeAppliances(recipeID)
+            appliance_text = ", ".join([getApplianceName(a) for a in appliances])
+            appliancelabel = ctk.CTkLabel(frame_bottominfo, text="Appliances Needed: " + appliance_text)
+            appliancelabel.grid(row=1, column=0, padx=5, pady=5)
+
+            ingredients = getRecipeIngredients(recipeID)
+            listbox_label = ctk.CTkLabel(frame_bottominfo, text="Ingredients:")
+            listbox_label.grid(row=2, column=0, padx=5, pady=5)
+            ingredient_listbox = CTkListbox(frame_bottominfo, height=250, width=200)
+            for ingredient, quantity, unit in ingredients:
+                ingredient_listbox.insert(tk.END, f"{ingredient} - {quantity} {unit}")
+            ingredient_listbox.grid(row=3, column=0, padx=5, pady=5)
+
+            
 
             # # Display the recipe information
             print("Recipe Name:", recipe_name)
@@ -137,7 +161,6 @@ def display_recipes():
     row_odd_num = 1  # for display the name of the each recipe
     column_num = 0
     gap_size = 15
-    
 
     for x in result:
         if column_num <= 2:
@@ -282,7 +305,6 @@ def addRecipePage():
 
     # clear_button = ctk.CTkButton(mainFrame,text="Clear content", command = clear_fields)
     # clear_button.grid(row=10,column=1)
-
     
 def displayIngredientSelection(combobox, ingredient_listbox):
     category = combobox.get()
