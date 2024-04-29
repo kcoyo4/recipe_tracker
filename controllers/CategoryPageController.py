@@ -14,6 +14,7 @@ def saveCategory(nameentry, feedbackLabel):
             query = "INSERT INTO Categories (categoryName) VALUES ('" + name + "')"
             # Using parameterized execution with a tuple
             cursor.execute(query)
+            connection.commit()
             query = "SELECT * FROM Categories"
             cursor.execute(query)
             result = cursor.fetchall()

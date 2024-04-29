@@ -14,6 +14,7 @@ def saveAppliance(nameentry, feedbackLabel):
             query = "INSERT INTO Appliances (applianceName) VALUES ('" + name + "')"
             # Using parameterized execution with a tuple
             cursor.execute(query)
+            connection.commit()
             query = "SELECT * FROM Appliances"
             cursor.execute(query)
             result = cursor.fetchall()

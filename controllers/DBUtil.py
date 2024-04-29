@@ -9,6 +9,7 @@ connection = mysql.connector.connect(
         password="Abaracadabara1!",
         database="recipedata",
         port=3306,
+
     )
 cursor = connection.cursor()
 # testing cursor connectivity
