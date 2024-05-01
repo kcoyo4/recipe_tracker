@@ -47,11 +47,8 @@ headerFrame.pack(anchor = 'n', side = TOP, fill = BOTH, expand = FALSE)
 leftTitle = ctk.CTkLabel(master = leftFrame, text = "ReciPedia", font = ctk.CTkFont(family="Calibri", size = 40, weight = 'normal'))
 leftTitle.pack(padx = 20, pady = 20)
 
-
-
 def image_click(even,image_path):
     clearPage()
-    print("Image clicked")
     frame_left = ctk.CTkFrame(mainFrame, fg_color = 'transparent', bg_color = 'transparent')
     frame_left.grid(row = 0, column=0,padx=10,pady=10)
 
@@ -212,14 +209,12 @@ def display_recipes():
         if answer == "":
             cursor.execute("SELECT * FROM Recipes")
             result = cursor.fetchall()
-            print("None")
             displayResult(result)
 
         else:
             sqlStatement = "SELECT * FROM Recipes WHERE recipeName LIKE '%" + answer + "%'"
             cursor.execute(sqlStatement)
             result = cursor.fetchall()
-            print("button")
             clearPage()
             displayResult(result)
 
@@ -264,7 +259,7 @@ def display_recipes():
 
     def getDurationSearch(entry):
         duration = entry.get()
-        if int(duration):
+        if duration.isdigit():
             query = "SELECT * FROM Recipes WHERE (prepTime + cookTime) <= %s"
             cursor.execute(query, (duration,))
             result = cursor.fetchall()
@@ -501,10 +496,6 @@ def addAppliancePage():
     savebutton.pack(padx=20, pady=10, side=tk.LEFT)
     feedbackLabel.pack(padx=20, pady=10, side=tk.LEFT)
 
-def removeRecipe():
-    clearPage()
-    print("Removed!")
-   
 # BUTTONS
 recipeButton = ctk.CTkButton(master = leftFrame, text = "Home ", command = display_recipes)
 addRecipeButton = ctk.CTkButton(master = leftFrame, text = " + Add Recipe ", command = addRecipePage)

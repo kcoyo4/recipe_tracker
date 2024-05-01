@@ -52,7 +52,6 @@ def getRecipeID(name):
     cursor.execute(query)
     tuple = cursor.fetchall()
     result = tuple[0][0]
-    print(result)
     return result
 
 def getCategoryID(name):
@@ -60,7 +59,6 @@ def getCategoryID(name):
     cursor.execute(query)
     tuple = cursor.fetchall()
     result = tuple[0][0]
-    print(result)
     return result
 
 def getApplianceID(name):
@@ -68,7 +66,6 @@ def getApplianceID(name):
     cursor.execute(query)
     tuple = cursor.fetchall()
     result = tuple[0][0]
-    print(result)
     return result
 
 def getIngredientID(name):
@@ -76,7 +73,6 @@ def getIngredientID(name):
     cursor.execute(query)
     tuple = cursor.fetchall()
     result = tuple[0][0]
-    print(result)
     return result
 
 def getUnitID(name):
@@ -84,7 +80,6 @@ def getUnitID(name):
     cursor.execute(query)
     tuple = cursor.fetchall()
     result = tuple[0][0]
-    print(result)
     return result
 
 def saveRecipeTable(recipetable_vals):
