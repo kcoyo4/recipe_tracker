@@ -43,4 +43,5 @@ def getRecipeIngredients(recipeID):
     )
     cursor.execute(query, (recipeID,))
     ingredients = cursor.fetchall()
+    
     return [(ingredient[0], ingredient[1], ingredient[2]) for ingredient in ingredients]
