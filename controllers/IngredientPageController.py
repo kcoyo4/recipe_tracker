@@ -58,6 +58,8 @@ def getIngCatID(name):
     print(result)
     return result
 
+
+
 def checkExisting(name):
     query = "SELECT ingName FROM Ingredients where ingName = '" + name + "'"
     cursor.execute(query)

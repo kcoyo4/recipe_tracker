@@ -32,8 +32,7 @@ def saveRecipe(name_text, prepTime_text, cookTime_text, serving_text, descriptio
             if appliances:
                 saveRecipeAppliances(appliances, thisID)
             clear_fields(name_text, prepTime_text, cookTime_text, serving_text, description_text, instruction_text)
-            # Print a success message
-            print("Recipe added successfully!")
+            messagebox.showinfo("Success", "Recipe uploaded successfully!")
         elif notexists == False:
             messagebox.showerror("Error", "A recipe with this name already exists.")
         else:
@@ -118,6 +117,8 @@ def saveRecipeIngredients(ingredients, recipeID):
             unitID = None
             if unit:
                 unitID = getUnitID(unit)
+            else:
+                unitID = 1
             value = (recipeID, ingID, unitID, quantity)
             query = "INSERT INTO RecipeIngredients(recipeID, ingID, unitID, quantity) VALUES (%s, %s, %s, %s)"
             cursor.execute(query, value)
@@ -167,9 +168,9 @@ def upload_image():
         photo = ImageTk.PhotoImage(image)
         # image_label.configure(image=photo)
         # image_label.image = photo  # Keep a reference to avoid garbage collection
-        save_image(file_path)
+        dir = save_image(file_path)
         messagebox.showinfo("Success", "Image uploaded successfully!")
-        return file_path
+        return dir
     else:
         return None
 
