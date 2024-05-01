@@ -23,7 +23,6 @@ def saveIngredient(nameentry, combobox, feedbackLabel):
             query = "SELECT * FROM Ingredients"
             cursor.execute(query)
             result = cursor.fetchall()
-            print(result)
             ingredientClear(nameentry, combobox, feedbackLabel)
             feedbackLabel.configure(text="Ingredient Successfully Added!")
         else:
@@ -55,7 +54,6 @@ def getIngCatID(name):
     cursor.execute(query)
     tuple = cursor.fetchall()
     result = tuple[0][0]
-    print(result)
     return result
 
 

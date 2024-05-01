@@ -18,7 +18,6 @@ def saveAppliance(nameentry, feedbackLabel):
             query = "SELECT * FROM Appliances"
             cursor.execute(query)
             result = cursor.fetchall()
-            print(result)
             fieldsClear(nameentry, feedbackLabel)
             feedbackLabel.configure(text="Appliance Successfully Added!")
         else:

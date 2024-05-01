@@ -18,7 +18,6 @@ def saveCategory(nameentry, feedbackLabel):
             query = "SELECT * FROM Categories"
             cursor.execute(query)
             result = cursor.fetchall()
-            print(result)
             fieldsClear(nameentry, feedbackLabel)
             feedbackLabel.configure(text="Category Successfully Added!")
         else:
