@@ -22,7 +22,11 @@ def saveRecipe(name_text, prepTime_text, cookTime_text, serving_text, descriptio
         notexists = checkRecipeNameExisting(name)
 
         # Execute the SQL command to insert the recipe into the database
-        if name and prepTime and cookTime and servingSize and descriptions and instructions and ingredients and notexists:
+        if notexists == False:
+            messagebox.showerror("Error", "A recipe with this name already exists.")
+        elif image_path == None:
+            messagebox("Error", "No duplicate images!")
+        elif name and prepTime and cookTime and servingSize and descriptions and instructions and ingredients and notexists and image_path != None:
             recipetable_vals = (name, image_path, prepTime, cookTime, servingSize, descriptions, instructions)
             saveRecipeTable(recipetable_vals)
             thisID = getRecipeID(name)
@@ -33,8 +37,6 @@ def saveRecipe(name_text, prepTime_text, cookTime_text, serving_text, descriptio
                 saveRecipeAppliances(appliances, thisID)
             clear_fields(name_text, prepTime_text, cookTime_text, serving_text, description_text, instruction_text)
             messagebox.showinfo("Success", "Recipe uploaded successfully!")
-        elif notexists == False:
-            messagebox.showerror("Error", "A recipe with this name already exists.")
         else:
             messagebox.showerror("Error", "Please fill out all necessary fields before submitting.")
 
@@ -164,8 +166,12 @@ def upload_image():
         # image_label.configure(image=photo)
         # image_label.image = photo  # Keep a reference to avoid garbage collection
         dir = save_image(file_path)
-        messagebox.showinfo("Success", "Image uploaded successfully!")
-        return dir
+        if dir == False:
+            messagebox.showinfo("Not Accepted", "No Duplicate Images")
+            return None
+        else:
+            messagebox.showinfo("Success", "Image uploaded successfully!")
+            return dir
     else:
         return None
 
@@ -173,6 +179,10 @@ def save_image(file_path):
     save_dir = "saved_images"
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
+    
+    if os.path.exists(file_path) == True:
+        return False
+    
     filename = os.path.basename(file_path)
     shutil.copy(file_path, os.path.join(save_dir, filename))
     print("Image saved to:", os.path.join(save_dir, filename))
