@@ -217,7 +217,6 @@ def getAppliances():
     names = [row[0] for row in results]
     return names
 
-
 def getIngredients(ID):
     query = "SELECT ingName FROM Ingredients WHERE ingtypeID = '" + ID + "'"
     # Execute the query
@@ -244,11 +243,14 @@ def addCategory(category_combo,  category_listbox):
     if category:
         entry = f"{category}"
         category_listbox.insert(tk.END, entry)
-        # Clear input fields after adding
-        category_listbox.set("")
+        current_values = category_combo.cget('values')
+        values_list = list(current_values)
+        if category in values_list:
+            values_list.remove(category)  # Remove the category that was just added
+            category_combo.configure(values=tuple(values_list))
+        category_combo.set("")
     else:
         tk.messagebox.showwarning("Input Error", "Please fill in all fields.")
-
 
 def addRecipeIngredient(ingredient_combo, quantity_entry, unit_combo, ingredient_listbox):
     ingredient = ingredient_combo.get()
@@ -262,12 +264,28 @@ def addRecipeIngredient(ingredient_combo, quantity_entry, unit_combo, ingredient
         ingredient_combo.set("")
         quantity_entry.delete(0, tk.END)
         unit_combo.set("")
+
+        current_values = ingredient_combo.cget('values')
+        values_list = list(current_values)
+        if ingredient in values_list:
+            values_list.remove(ingredient)  # Remove the category that was just added
+            ingredient_combo.configure(values=tuple(values_list))
+        ingredient_combo.set("")
+
     elif ingredient and quantity:
         entry = f"{ingredient} - {quantity}"
         ingredient_listbox.insert(tk.END, entry)
         ingredient_combo.set("")
         quantity_entry.delete(0, tk.END)
         unit_combo.set("")
+
+        current_values = ingredient_combo.cget('values')
+        values_list = list(current_values)
+        if ingredient in values_list:
+            values_list.remove(ingredient)  # Remove the category that was just added
+            ingredient_combo.configure(values=tuple(values_list))
+        ingredient_combo.set("")
+
     else:
         tk.messagebox.showwarning("Input Error", "Please fill in all fields.")
 
@@ -277,7 +295,11 @@ def addAppliance(appliance_combo,  appliance_listbox):
     if appliance:
         entry = f"{appliance}"
         appliance_listbox.insert(tk.END, entry)
-        # Clear input fields after adding
-        appliance_listbox.set("")
+        current_values = appliance_combo.cget('values')
+        values_list = list(current_values)
+        if appliance in values_list:
+            values_list.remove(appliance)  # Remove the category that was just added
+            appliance_combo.configure(values=tuple(values_list))
+        appliance_combo.set("")
     else:
         tk.messagebox.showwarning("Input Error", "Please fill in all fields.")

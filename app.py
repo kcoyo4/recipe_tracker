@@ -160,7 +160,6 @@ def newWindow(even, parent_frame, image_path):
     except Exception as e:
         print(f"Error fetching recipe information: {e}")
     
-
 def image_click(even,image_path):
     clearPage()
     frame_left = ctk.CTkFrame(mainFrame, fg_color = 'red', bg_color = 'red')
@@ -534,7 +533,6 @@ def addRecipePage():
     """
 
     #addRecipeFrame.pack(fill = BOTH, expand = TRUE)
-
     topLeftFrame = ctk.CTkFrame(mainFrame, width = 100, height = 300, fg_color = 'transparent', bg_color='transparent')
     topLeftFrame.pack(side = tk.LEFT, fill = BOTH, expand = False)
 
@@ -549,15 +547,11 @@ def addRecipePage():
     upperRightFrame = ctk.CTkFrame(mainFrame, width = 200, height = 600, fg_color = 'gray', bg_color = 'gray')
     upperRightFrame.pack(side = tk.RIGHT, fill = BOTH, expand = TRUE)
 
-    
-    
-    
     name_label = ctk.CTkLabel(topLeftFrame, text = "Name Of The Recipe")
     name_text = ctk.CTkEntry(topLeftFrame, placeholder_text= "Name")
    
     name_label.grid(row=0, column=0, padx =5, pady=5)
     name_text.grid(row=0, column=1, padx = 5, pady=5)
-
     #name_label.pack(padx = 10, pady = 20, side = tk.LEFT)
     #name_text.pack(padx = 10, pady = 20, side = tk.LEFT)
 
@@ -700,7 +694,7 @@ def addRecipePage():
             unit_combo = ctk.CTkComboBox(upperRightFrame, values=unit_options, state="readonly")
             unit_combo.grid(row=2, column=1, padx = 20, pady = 20)
 
-            
+        
             #add_button = ttk.Button(mainFrame, text="Add", command=lambda: addRecipeIngredient(ingredient_combo, quantity_entry, unit_combo, ingredient_listbox))
             add_button = ctk.CTkButton(upperRightFrame, text="Add", command=lambda: addRecipeIngredient(ingredient_combo, quantity_entry, unit_combo, ingredient_listbox))
             add_button.grid(row=3, column=1, padx = 20, pady = 20)
