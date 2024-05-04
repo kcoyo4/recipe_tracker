@@ -82,23 +82,21 @@ CREATE TABLE RecipeCategories (
 );
 
 #Populate DB with default values
-INSERT INTO IngredientTypes (ingtypeName) VALUES ('Vegetables & Greens'), ('Fruits'), ('Spices'), ('Dairy & Eggs'), ('Dairy & Meat Substitutes'),
-('Meats'), ('Poultry'), ('Herbs & Spices'), ('Seafood'), ('Baking Products, Grain, & Nuts'), ('Fats & Oils'),('Pastas');
+INSERT INTO IngredientTypes (ingtypeName) VALUES ('Vegetables & Greens'), ('Fruits'), ('Herbs & Spices'), ('Dairy & Eggs'), ('Dairy & Meat Substitutes'),
+('Meats'), ('Poultry'),('Seafood'), ('Baking Products, Grain, & Nuts'), ('Fats & Oils'),('Pastas'),('Liquids'), ('Sauces, Syrups, & Condiments');
 
-INSERT INTO Ingredients (ingtypeID, ingName) VALUES (1, 'Carrot'),(10, 'Flour'),(10, 'Baking Powder'),(10, 'Cream of Tartar'),(11, 'Butter'),(11, 'Vegetable Oil'),(10, 'Vanilla Extract'),
-(10, 'Sugar'),(4, 'Cheese'),(3,'Salt'),(3,'Black Pepper'),(12,'Macaroni'),(4, 'Milk');
+INSERT INTO Ingredients (ingtypeID, ingName) VALUES (1, 'Carrot'),(10, 'Flour'),(9, 'Baking Powder'),(9, 'Cream of Tartar'),(10, 'Butter'),(10, 'Vegetable Oil'),(9, 'Vanilla Extract'),
+(9, 'Sugar'),(4, 'Shredded Cheddar Cheese'),(3,'Salt'),(3,'Black Pepper'),(11,'Macaroni'),(4, 'Milk'),(10, 'Olive Oil'),(4, 'Large Egg'),(4, 'Egg'),(3,'Red Pepper Flakes');
 
 INSERT INTO Categories (categoryName) VALUES ('Vegetarian'),('Vegan'),('Dinner'),('Mexican'),('Thai'),('Mediterranean'); 
 
 INSERT INTO Appliances (applianceName) VALUES ('Stove'),('Oven'),('Microwave'),('Air Fryer'),('Blender'),('Pasta Maker'),('Toaster');
 
-INSERT INTO	Units (unitName) VALUES ('Cup'),('Teaspoon'),('Tablespoon'),('Milliliter'),('Fluid Ounce'),('Pound'),('Ounce');
-
-SELECT * FROM Units;
-SELECT * FROM Categories;
-
-SELECT * FROM RecipeCategories;
-SELECT * FROM RecipeAppliances;
-SELECT * FROM RecipeIngredients;
-
+INSERT INTO	Units (unitName) VALUES (''),('Cup'),('Teaspoon'),('Tablespoon'),('Milliliter'),('Fluid Ounce'),('Pound'),('Ounce'),('To Taste');
 SELECT * FROM Recipes;
+
+ 
+ 
+
+
+
