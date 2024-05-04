@@ -71,10 +71,10 @@ def newWindow(even, parent_frame, image_path):
 
     newWindow.resizable(True, True)
 
-    winFrame = ctk.CTkFrame(newWindow, height = 700, width = 450, fg_color='gray', bg_color='gray')
+    winFrame = ctk.CTkFrame(newWindow, height = 700, width = 450, fg_color='#d3d3d3', bg_color='#d3d3d3')
     winFrame.pack(fill = BOTH, expand = TRUE)
 
-    frame_left = ctk.CTkFrame(winFrame, fg_color = 'white', bg_color = 'white')
+    frame_left = ctk.CTkFrame(winFrame, fg_color = '#d3d3d3', bg_color = '#d3d3d3')
     frame_left.grid(row = 0, column = 0, padx = 10, pady = 10)
     #frame_left.pack(padx = 20, pady = 20)
 
@@ -164,8 +164,8 @@ def showScrollable():
     clearPage()
     
     def myHeader(parent_frame):
-        headerFrame = tk.Frame(parent_frame)
-        headerFrame.pack()
+        headerFrame = ctk.CTkFrame(parent_frame)
+        headerFrame.pack(fill = X)
         searchBar = ctk.CTkEntry(headerFrame, width = 300, height = 30, bg_color = 'transparent',
                                 fg_color = 'transparent', placeholder_text = "Search")
         searchBar.grid(row=0, column=0, padx = 20, pady = 20)
@@ -179,9 +179,9 @@ def showScrollable():
 
     
     def myRight(parent_frame):
-        rightFrame = tk.Frame(parent_frame)
+        rightFrame = ctk.CTkFrame(parent_frame)
         # rightFrame.configure(height=700, width=200, fg_color='light gray', bg_color='light gray')
-        rightFrame.pack(side='right')
+        rightFrame.pack(side='right', fill = Y)
 
         spacer = ctk.CTkLabel(rightFrame, text="More Search Options:")
         
